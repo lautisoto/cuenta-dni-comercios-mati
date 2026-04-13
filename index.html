@@ -1873,35 +1873,6 @@ function setPlazo(p, el) {
   calcular();
 }
 
-function calcular() {
-  let monto = parseFloat(document.getElementById('monto').value) || 0;
-  let medio = document.getElementById('medio').value;
-
-  let tasa = 0;
-
-  if (medio === "credito") {
-    if (plazo === 2) tasa = 0.0436;
-    if (plazo === 10) tasa = 0.0338;
-    if (plazo === 18) tasa = 0.0268;
-  } else {
-    tasa = 0.0147;
-  }
-
-  let comision = monto * tasa;
-  let neto = monto - comision;
-
-  document.getElementById('r-cobro').innerText = "$" + monto.toLocaleString();
-  document.getElementById('r-comision').innerText = "$" + Math.round(comision).toLocaleString();
-  document.getElementById('r-neto').innerText = "$" + Math.round(neto).toLocaleString();
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-  document.getElementById('monto').addEventListener('input', calcular);
-  document.getElementById('medio').addEventListener('change', calcular);
-  calcular();
-});
-</script>
-
 <!-- ═══════════════ SIMULADOR ═══════════════ -->
 <section class="section" id="simulador">
   <div class="sec-header">

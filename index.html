@@ -912,6 +912,17 @@ h2 .teal { color: var(--teal); }
 .ar-rate.mid { color: #f4c542; }
 .ar-rate.high { color: rgba(255,255,255,0.5); }
 
+.ar-rate {
+  position: relative;
+}
+
+.ar-rate::after {
+  content: '%';
+  font-size: 0.6em;
+  opacity: 0.6;
+  margin-left: 2px;
+}
+  
 .ar-sub {
   font-size: 0.67rem;
   color: rgba(255,255,255,0.35);
@@ -1846,14 +1857,51 @@ footer p { font-size: 0.77rem; color: rgba(255,255,255,0.25); }
 </section>
 
 <script>
-function showTab(btn, id) {
-  let plazo = 10;
+let plazo = 10;
 
-function setPlazo(p) {
+function showTab(btn, id) {
+  document.querySelectorAll('.ar-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ar-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function setPlazo(p, el) {
   plazo = p;
   document.querySelectorAll('.simu-tabs button').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  el.classList.add('active');
+  calcular(); // 👈 recalcula automáticamente
 }
+
+function calcular() {
+  let monto = parseFloat(document.getElementById('monto').value) || 0;
+  let medio = document.getElementById('medio').value;
+
+  let tasa = 0;
+
+  if (medio === "credito") {
+    if (plazo === 2) tasa = 0.0436;
+    if (plazo === 10) tasa = 0.0338;
+    if (plazo === 18) tasa = 0.0268;
+  } else {
+    tasa = 0.0147;
+  }
+
+  let comision = monto * tasa;
+  let neto = monto - comision;
+
+  document.getElementById('r-cobro').innerText = "$" + monto.toLocaleString();
+  document.getElementById('r-comision').innerText = "$" + Math.round(comision).toLocaleString();
+  document.getElementById('r-neto').innerText = "$" + Math.round(neto).toLocaleString();
+}
+
+// 👇 hace que sea dinámico
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById('monto').addEventListener('input', calcular);
+  document.getElementById('medio').addEventListener('change', calcular);
+  calcular(); // cálculo inicial
+});
+</script>
 
 function calcular() {
   let monto = parseFloat(document.getElementById('monto').value);
@@ -1905,9 +1953,9 @@ function calcular() {
 
       <label>Plazo</label>
       <div class="simu-tabs">
-        <button onclick="setPlazo(2)">2 días</button>
-        <button onclick="setPlazo(10)" class="active">10 días</button>
-        <button onclick="setPlazo(18)">18 días</button>
+        <button onclick="setPlazo(2, this)">2 días</button>
+        <button onclick="setPlazo(10, this)" class="active">10 días</button>
+        <button onclick="setPlazo(18, this)">18 días</button>
       </div>
 
       <button onclick="calcular()">Calcular</button>

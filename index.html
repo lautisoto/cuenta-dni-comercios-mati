@@ -1024,6 +1024,49 @@ h2 .teal { color: var(--teal); }
   .ar-bono-pill { margin-left: 0; }
 }
 
+/* ─────────── SIMULADOR ─────────── */
+.simu-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.simu-box {
+  background: rgba(255,255,255,0.04);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.simu-box input, .simu-box select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0 20px;
+  border-radius: 6px;
+  border: none;
+}
+
+.simu-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.simu-tabs button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.simu-tabs .active {
+  background: #279D2E;
+  color: white;
+}
+
+.result strong {
+  font-size: 1.2rem;
+}
+  
 /* ─────────── CTA ─────────── */
 .cta-block {
   background: var(--dark2);
@@ -1804,6 +1847,35 @@ footer p { font-size: 0.77rem; color: rgba(255,255,255,0.25); }
 
 <script>
 function showTab(btn, id) {
+  let plazo = 10;
+
+function setPlazo(p) {
+  plazo = p;
+  document.querySelectorAll('.simu-tabs button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function calcular() {
+  let monto = parseFloat(document.getElementById('monto').value);
+  let medio = document.getElementById('medio').value;
+
+  let tasa = 0;
+
+  if (medio === "credito") {
+    if (plazo === 2) tasa = 0.0436;
+    if (plazo === 10) tasa = 0.0338;
+    if (plazo === 18) tasa = 0.0268;
+  } else {
+    tasa = 0.0147;
+  }
+
+  let comision = monto * tasa;
+  let neto = monto - comision;
+
+  document.getElementById('r-cobro').innerText = "$" + monto.toLocaleString();
+  document.getElementById('r-comision').innerText = "$" + Math.round(comision).toLocaleString();
+  document.getElementById('r-neto').innerText = "$" + Math.round(neto).toLocaleString();
+}
   document.querySelectorAll('.ar-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.ar-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('panel-' + id).classList.add('active');
@@ -1811,6 +1883,47 @@ function showTab(btn, id) {
 }
 </script>
 
+<!-- ═══════════════ SIMULADOR ═══════════════ -->
+<section class="section" id="simulador">
+  <div class="sec-header">
+    <div class="sec-label">Simulador</div>
+    <h2>Calculá cuánto recibís<br><span class="verde">según tu plazo</span></h2>
+  </div>
+
+  <div class="simu-container">
+    
+    <!-- INPUTS -->
+    <div class="simu-box">
+      <label>Monto de venta</label>
+      <input type="number" id="monto" value="10000">
+
+      <label>Medio de pago</label>
+      <select id="medio">
+        <option value="credito">Tarjeta de crédito</option>
+        <option value="debito">Tarjeta de débito</option>
+      </select>
+
+      <label>Plazo</label>
+      <div class="simu-tabs">
+        <button onclick="setPlazo(2)">2 días</button>
+        <button onclick="setPlazo(10)" class="active">10 días</button>
+        <button onclick="setPlazo(18)">18 días</button>
+      </div>
+
+      <button onclick="calcular()">Calcular</button>
+    </div>
+
+    <!-- RESULTADO -->
+    <div class="simu-box result">
+      <h3>Resultado</h3>
+      <p>Monto cobrado: <strong id="r-cobro">$0</strong></p>
+      <p>Comisión: <strong id="r-comision">$0</strong></p>
+      <p>Recibís: <strong id="r-neto">$0</strong></p>
+    </div>
+
+  </div>
+</section>
+  
 <!-- ═══════════════ CTA ═══════════════ -->
 <section class="cta-block" id="cta">
   <h2>Empezá a cobrar<br>con todo hoy</h2>
